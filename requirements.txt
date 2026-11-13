@@ -1,0 +1,7 @@
+manifold3d
+shapely
+scipy
+numpy
+matplotlib
+trimesh
+pyvista

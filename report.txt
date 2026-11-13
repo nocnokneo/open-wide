@@ -1,0 +1,37 @@
+Printable parts (as laid on the bed):
+  base                  211.0 x  38.0 x  24.8 mm    96.9 cm3 solid
+  lever                 240.8 x  56.4 x  14.0 mm    66.5 cm3 solid
+  upper_mouthpiece       73.0 x  57.3 x  14.4 mm    11.1 cm3 solid
+  lower_tray             57.5 x  32.1 x   5.3 mm     3.8 cm3 solid
+  limit_screw            27.0 x  26.1 x  59.0 mm     8.5 cm3 solid
+  limit_nut_1_dot        20.0 x  20.0 x  10.0 mm     2.9 cm3 solid
+  limit_nut_2_dot        20.0 x  20.0 x  10.0 mm     2.9 cm3 solid
+  limit_nut_3_dot        20.0 x  20.0 x  10.0 mm     3.0 cm3 solid
+  pivot_pin_print_2      33.8 x  12.0 x   6.6 mm     1.3 cm3 solid
+  hinge_fit_test         30.7 x  12.0 x  14.0 mm     3.1 cm3 solid
+
+Hand force = 1.32 x force on the teeth (hand 85 mm from the pivot)
+  handle gap at the grip, opening 12.5 mm: 26.2 mm (grip span 64.2 mm)
+  handle gap at the grip, opening 20.0 mm: 21.7 mm (grip span 59.7 mm)
+  handle gap at the grip, opening 30.0 mm: 15.4 mm (grip span 53.4 mm)
+  handle gap at the grip, opening 40.0 mm:  8.9 mm (grip span 46.9 mm)
+  handle gap at the grip, opening 46.0 mm:  5.0 mm (grip span 43.0 mm)
+
+Main pivot at x = 82.4, z = -59.8 mm from the upper incisal edge
+Scale reads 12.5 mm fully closed, 46 mm at the hard stop
+
+opening  lever turn  tray tilt  path error  interference
+  12.5      0.0 deg    9.5 deg    1.87 mm   0.000 mm3
+  14.0      0.6 deg   10.6 deg    1.45 mm   0.000 mm3
+  18.0      2.1 deg   13.7 deg    0.52 mm   0.000 mm3
+  22.0      3.7 deg   16.8 deg    0.18 mm   0.000 mm3
+  26.0      5.3 deg   19.9 deg    0.62 mm   0.000 mm3
+  30.0      7.0 deg   23.1 deg    0.80 mm   0.000 mm3
+  34.0      8.7 deg   26.4 deg    0.69 mm   0.000 mm3
+  38.0     10.5 deg   29.8 deg    0.28 mm   0.000 mm3
+  42.0     12.2 deg   33.2 deg    0.45 mm   0.000 mm3
+  46.0     14.0 deg   36.8 deg    1.54 mm   0.000 mm3
+
+Lower tray hinge: working tilt up to 51 deg relative to the lever tip; comes off only at 160-170 deg
+
+Limit screw: left-handed thread; nut radial clearances: 1 dot = 0.25 mm, 2 dot = 0.15 mm, 3 dot = 0.05 mm
