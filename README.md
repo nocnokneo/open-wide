@@ -68,6 +68,12 @@ uv pip install --python .venv/bin/python -r requirements.txt
 Pushing a tag `v1`, `v2`, … publishes a GitHub release with the STLs zipped (`.github/workflows/release.yml`).
 The model-sharing sites have no upload API, so update them by hand from that zip: see `publishing/listing.md`.
 
+## Numbers
+
+* Page visits and button clicks: GoatCounter, once `goatcounter_code` is set in `docs/_config.yml`.
+* STL downloads per release: `gh api repos/nocnokneo/open-wide/releases --jq '.[] | "\(.tag_name) \(.assets[0].download_count)"'`
+* Repository views and clones for the last 14 days: the repo's Insights → Traffic page.
+
 ## License
 
 * Python source: MIT, see `LICENSE`.

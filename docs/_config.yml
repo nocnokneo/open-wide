@@ -4,3 +4,7 @@ url: https://nocnokneo.github.io
 baseurl: /open-wide
 repository_url: https://github.com/nocnokneo/open-wide
 markdown: kramdown
+
+# Visit counting with GoatCounter (no cookies, no personal data).
+# Sign up at https://www.goatcounter.com/signup and put your site code here; leave empty to count nothing.
+goatcounter_code:

@@ -17,8 +17,8 @@
       <h1>{{ site.title }}</h1>
       <p class="tagline">{{ site.description }}</p>
       <p class="actions">
-        <a class="button primary" href="{{ site.repository_url }}/releases/latest">Download the STLs</a>
-        <a class="button" href="{{ site.repository_url }}">Source on GitHub</a>
+        <a class="button primary" href="{{ site.repository_url }}/releases/latest" data-goatcounter-click="download-stls">Download the STLs</a>
+        <a class="button" href="{{ site.repository_url }}" data-goatcounter-click="source-on-github">Source on GitHub</a>
       </p>
     </div>
     <img class="hero-photo" src="{{ '/images/photo.jpg' | relative_url }}" alt="The printed jaw stretcher: two black handles, a thumbscrew and two mouthpieces">
@@ -29,7 +29,9 @@
   </main>
   <footer>
     <p>Models, images and this guide: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code: MIT. <a href="{{ site.repository_url }}">{{ site.repository_url | remove: 'https://' }}</a></p>
+    {% if site.goatcounter_code %}<p>This page counts visits with <a href="https://www.goatcounter.com/">GoatCounter</a>: no cookies, no personal data.</p>{% endif %}
   </footer>
+  {% if site.goatcounter_code %}<script data-goatcounter="https://{{ site.goatcounter_code }}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>{% endif %}
   <script>
     // the contents bar is built from the section headings, so it cannot drift from them
     const nav = document.querySelector("nav.contents");
