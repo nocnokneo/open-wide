@@ -13,7 +13,7 @@ from design import DESIGN as d
 from render import render
 
 ROOT = pathlib.Path(__file__).parent
-STL_DIR, IMAGE_DIR = ROOT / "stl", ROOT / "images"
+STL_DIR, IMAGE_DIR = ROOT / "stl", ROOT / "docs" / "images"
 BED_MM = 250.0
 
 
@@ -121,49 +121,82 @@ def check_hinge_retention(assembly: Assembly, report: list[str]):
 
 
 def write_renders(assembly: Assembly, laid_out: dict[str, Manifold]):
-    IMAGE_DIR.mkdir(exist_ok=True)
+    IMAGE_DIR.mkdir(parents=True, exist_ok=True)
     for opening in (d.closed_opening_mm, 30.0, d.max_opening_mm):
         scene = {**assembly.posed(opening), **assembly.hardware(max(opening, 14))}
         tag = "closed" if opening == d.closed_opening_mm else f"{opening:.0f}mm"
-        render(scene, str(IMAGE_DIR / f"side_{tag}.png"), "side")
         render(scene, str(IMAGE_DIR / f"section_{tag}.png"), "side", clip_y=0.01)
+    _write_sections_overview()
     scene = {**assembly.posed(30.0), **assembly.hardware(30.0)}
     render(scene, str(IMAGE_DIR / "assembly_30mm.png"), "iso")
-    render(scene, str(IMAGE_DIR / "assembly_30mm_front.png"), "front")
     handle_end = d.pivot_xz + 118 * d.base_handle_direction
     render(scene, str(IMAGE_DIR / "scale_and_limit_screw.png"), "iso", zoom=1.0, camera=[(handle_end[0] + 30, -170, handle_end[1] - 10), (handle_end[0] - 12, 0, handle_end[1] + 4), (0, 0, 1)])
     closed = {**assembly.posed(d.closed_opening_mm), **assembly.hardware(14)}
     render(closed, str(IMAGE_DIR / "mouth_end_closed_section.png"), "side", clip_y=0.01, focus=(8, -4, 52), size=(1500, 900))
     wide = {**assembly.posed(d.max_opening_mm), **assembly.hardware(d.max_opening_mm)}
     render(wide, str(IMAGE_DIR / "mouth_end_46mm_section.png"), "side", clip_y=0.01, focus=(2, -22, 80), size=(1500, 900))
-    _write_sections_overview()
+    _write_tray_fitting(assembly)
+    nuts = {f"nut_{dots}": parts.limit_nut(dots, d).translate((27 * (dots - 1), 0, 0)) for dots in parts.nut_dots(d)}
+    render(nuts, str(IMAGE_DIR / "limit_nuts.png"), "iso", size=(2400, 1040), zoom=1.0, camera=[(27, -150, 125), (27, 0, 1), (0, 0, 1)])
+    _trim_margins(IMAGE_DIR / "limit_nuts.png")
     # the printable parts spread out, seen from above
     spread, x = {}, 0.0
     for name, solid in laid_out.items():
-        x_min, y_min, _, x_max, y_max, _ = solid.bounding_box()
         if name == "hinge_fit_test":
             continue
+        x_min, y_min, _, x_max, y_max, _ = solid.bounding_box()
         key = {"base": "base", "lever": "lever", "upper_mouthpiece": "upper", "lower_tray": "lower", "limit_screw": "screw"}.get(name, "nut" if name.startswith("limit_nut") else "pin")
         spread[f"{key}_{name}"] = solid.rotate((0, 0, 90)).translate((x + (y_max - y_min) / 2, 0, 0))
         x += (y_max - y_min) + 8
     render(spread, str(IMAGE_DIR / "print_layout.png"), "top", size=(1600, 1100), zoom=1.3)
+    _trim_margins(IMAGE_DIR / "print_layout.png")
+
+
+def _trim_margins(path: pathlib.Path, margin_px: int = 50):
+    from PIL import Image, ImageChops
+
+    image = Image.open(path).convert("RGB")
+    left, top, right, bottom = ImageChops.difference(image, Image.new("RGB", image.size, "white")).getbbox()
+    image.crop((max(left - margin_px, 0), max(top - margin_px, 0), min(right + margin_px, image.width), min(bottom + margin_px, image.height))).save(path)
+
+
+def _write_tray_fitting(assembly: Assembly):
+    """The lower tray folded back as it is hooked onto the lever tip, beside its working position."""
+    hinge, hinge_in_tray = d.closed_hinge_xz, d.hinge_in_tray_xz
+    out = np.array([np.cos(np.radians(d.hook_mouth_direction_deg)), np.sin(np.radians(d.hook_mouth_direction_deg))])
+    for name, tilt_deg, slide_mm in (("tray_fitting_1_hook_on", d.tray_fitting_tilt_deg, 7.0), ("tray_fitting_2_swing_forward", 25.0, 0.0)):
+        shift = hinge - hinge_in_tray + slide_mm * out
+        tray = about_lateral_axis(assembly.lower_tray, hinge_in_tray, -np.radians(tilt_deg)).translate((shift[0], 0, shift[1]))
+        render({"lever": assembly.lever_closed, "lower": tray}, str(IMAGE_DIR / f"{name}.png"), "iso", size=(1100, 800), zoom=1.0, camera=[(hinge[0] - 95, -120, hinge[1] + 70), (hinge[0] + 8, 0, hinge[1] - 4), (0, 0, 1)])
 
 
 def _write_sections_overview():
-    import matplotlib
+    from PIL import Image, ImageChops, ImageDraw, ImageFont
 
-    matplotlib.use("Agg")
-    import matplotlib.image as mpimg
-    import matplotlib.pyplot as plt
+    titles = {"closed": f"Closed ({d.closed_opening_mm:.1f} mm)", "30mm": "30 mm, limit set to 30", "46mm": "46 mm (hard stop)"}
+    panels = []
+    for tag in titles:
+        panel = Image.open(IMAGE_DIR / f"section_{tag}.png").convert("RGB")
+        content = ImageChops.difference(panel, Image.new("RGB", panel.size, "white")).getbbox()
+        panels.append(panel.crop(content))
+    gap, title_height = 60, 80
+    height = max(panel.height for panel in panels)
+    width = sum(panel.width for panel in panels) + gap * (len(panels) + 1)
+    overview = Image.new("RGB", (width, height + title_height + gap), "white")
+    draw = ImageDraw.Draw(overview)
+    font = ImageFont.truetype(_font_path(), 40)
+    x = gap
+    for panel, title in zip(panels, titles.values()):
+        overview.paste(panel, (x, title_height + (height - panel.height) // 2))
+        draw.text((x + panel.width / 2, title_height / 2 + 10), title, fill="#1f2430", font=font, anchor="mm")
+        x += panel.width + gap
+    overview.save(IMAGE_DIR / "sections_overview.png")
 
-    titles = {"closed": f"Closed (scale reads {d.closed_opening_mm:.1f} mm)", "30mm": "30 mm opening, limit screw set to 30", "46mm": "46 mm opening (hard stop)"}
-    figure, axes = plt.subplots(1, 3, figsize=(21, 7.2))
-    for axis, (tag, title) in zip(axes, titles.items()):
-        axis.imshow(mpimg.imread(IMAGE_DIR / f"section_{tag}.png"))
-        axis.set_title(title, fontsize=16)
-        axis.axis("off")
-    figure.tight_layout()
-    figure.savefig(IMAGE_DIR / "sections_overview.png", dpi=70)
+
+def _font_path() -> str:
+    from matplotlib import font_manager
+
+    return font_manager.findfont("DejaVu Sans")
 
 
 def main():

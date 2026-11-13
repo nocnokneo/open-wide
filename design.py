@@ -88,7 +88,7 @@ class Design:
     thread_major_diameter_mm: float = 12.0
     thread_pitch_mm: float = 3.0
     thread_depth_mm: float = 1.3
-    thread_is_left_handed: bool = True  # turning the knob clockwise then raises the limit
+    thread_is_left_handed: bool = False
     # Radial thread clearance of each nut variant, by the number of dots marked on it.
     # The nuts are split, so one that is tight on a given printer grips the screw like a spring.
     nut_thread_clearance_by_dots_mm: tuple[float, ...] = (0.25, 0.15, 0.05)

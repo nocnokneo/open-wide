@@ -34,4 +34,4 @@ opening  lever turn  tray tilt  path error  interference
 
 Lower tray hinge: working tilt up to 51 deg relative to the lever tip; comes off only at 160-170 deg
 
-Limit screw: left-handed thread; nut radial clearances: 1 dot = 0.25 mm, 2 dot = 0.15 mm, 3 dot = 0.05 mm
+Limit screw: right-handed thread; nut radial clearances: 1 dot = 0.25 mm, 2 dot = 0.15 mm, 3 dot = 0.05 mm

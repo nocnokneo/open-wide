@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags: ["v[0-9]+"]
+  workflow_dispatch: # dry run: builds the zip as a workflow artifact without publishing a release
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Zip the STLs
+        run: zip --junk-paths "open-wide-${GITHUB_REF_NAME}-stl.zip" stl/*.stl LICENSE-CC-BY-4.0
+
+      - name: Publish the release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" open-wide-*-stl.zip --title "$GITHUB_REF_NAME" --generate-notes
+
+      - name: Keep the zip from a dry run
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stl-zip
+          path: open-wide-*-stl.zip

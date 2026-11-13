@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ site.title }}: a printable jaw stretcher</title>
+  <meta name="description" content="{{ site.description }}">
+  <meta property="og:title" content="{{ site.title }}: a printable jaw stretcher">
+  <meta property="og:description" content="{{ site.description }}">
+  <meta property="og:image" content="{{ '/images/photo.jpg' | absolute_url }}">
+  <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">3D-printable &middot; open source</p>
+      <h1>{{ site.title }}</h1>
+      <p class="tagline">{{ site.description }}</p>
+      <p class="actions">
+        <a class="button primary" href="{{ site.repository_url }}/releases/latest">Download the STLs</a>
+        <a class="button" href="{{ site.repository_url }}">Source on GitHub</a>
+      </p>
+    </div>
+    <img class="hero-photo" src="{{ '/images/photo.jpg' | relative_url }}" alt="The printed jaw stretcher: two black handles, a thumbscrew and two mouthpieces">
+  </header>
+  <nav class="contents" aria-label="On this page"></nav>
+  <main>
+{{ content }}
+  </main>
+  <footer>
+    <p>Models, images and this guide: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code: MIT. <a href="{{ site.repository_url }}">{{ site.repository_url | remove: 'https://' }}</a></p>
+  </footer>
+  <script>
+    // the contents bar is built from the section headings, so it cannot drift from them
+    const nav = document.querySelector("nav.contents");
+    for (const heading of document.querySelectorAll("main h2[id]")) {
+      const link = document.createElement("a");
+      link.href = "#" + heading.id;
+      link.textContent = heading.textContent;
+      nav.append(link);
+    }
+  </script>
+</body>
+</html>
