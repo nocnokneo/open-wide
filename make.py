@@ -41,9 +41,8 @@ def printable_parts() -> dict[str, Manifold]:
         "upper_mouthpiece": parts.upper_mouthpiece(d),
         "lower_tray": parts.lower_tray(d).rotate((180, 0, 0)),  # hinge side on the bed, rims up
         "limit_screw": parts.limit_screw(d),
-        **{f"limit_nut_{dots}_dot": parts.limit_nut(dots, d) for dots in parts.nut_dots(d)},
+        "limit_nut": parts.limit_nut(d),
         "pivot_pin_print_2": parts.snap_pin(d.base_width_mm, d),
-        "hinge_fit_test": parts.hinge_fit_test(d),
     }
 
 
@@ -84,12 +83,11 @@ def check_assembly(assembly: Assembly, report: list[str]):
 
 
 def check_thread(report: list[str]):
-    """Every nut must screw onto the limit screw, and the handedness must be the one the README states."""
+    """The nut must screw onto the limit screw, and the handedness must be the one set in design.py."""
     screw = parts.limit_screw(d)
-    for dots in parts.nut_dots(d):
-        # one whole number of pitches above where the screw's thread starts, the threads are in phase
-        meshed = parts.limit_nut(dots, d).translate((0, 0, parts.SCREW_KNOB_HEIGHT_MM + 1 + 4 * d.thread_pitch_mm))
-        assert (screw ^ meshed).volume() < 1.5, dots  # mm3; faceting alone gives ~0.7, a thread out of phase ~80
+    # one whole number of pitches above where the screw's thread starts, the threads are in phase
+    meshed = parts.limit_nut(d).translate((0, 0, parts.SCREW_KNOB_HEIGHT_MM + 1 + 4 * d.thread_pitch_mm))
+    assert (screw ^ meshed).volume() < 1.5  # mm3; faceting alone gives ~0.7, a thread out of phase ~80
     # crest direction a quarter pitch up the thread: -90 deg for a left-handed thread, +90 for right-handed
     quarter_up = parts.SCREW_KNOB_HEIGHT_MM + 10 * d.thread_pitch_mm + d.thread_pitch_mm / 4
     section = np.vstack(screw.slice(quarter_up).to_polygons())
@@ -97,8 +95,7 @@ def check_thread(report: list[str]):
     crest_deg = np.degrees(np.arctan2(crest[1], crest[0]))
     assert abs(crest_deg - (-90 if d.thread_is_left_handed else 90)) < 20, crest_deg  # the crest has a flat
     hand = "left" if d.thread_is_left_handed else "right"
-    fits = ", ".join(f"{dots} dot = {c:.2f} mm" for dots, c in zip(parts.nut_dots(d), d.nut_thread_clearance_by_dots_mm))
-    report.append(f"\nLimit screw: {hand}-handed thread; nut radial clearances: {fits}")
+    report.append(f"\nLimit screw: {hand}-handed thread; nut radial clearance {d.nut_thread_radial_clearance_mm:.2f} mm")
 
 
 def check_hinge_retention(assembly: Assembly, report: list[str]):
@@ -136,16 +133,11 @@ def write_renders(assembly: Assembly, laid_out: dict[str, Manifold]):
     wide = {**assembly.posed(d.max_opening_mm), **assembly.hardware(d.max_opening_mm)}
     render(wide, str(IMAGE_DIR / "mouth_end_46mm_section.png"), "side", clip_y=0.01, focus=(2, -22, 80), size=(1500, 900))
     _write_tray_fitting(assembly)
-    nuts = {f"nut_{dots}": parts.limit_nut(dots, d).translate((27 * (dots - 1), 0, 0)) for dots in parts.nut_dots(d)}
-    render(nuts, str(IMAGE_DIR / "limit_nuts.png"), "iso", size=(2400, 1040), zoom=1.0, camera=[(27, -150, 125), (27, 0, 1), (0, 0, 1)])
-    _trim_margins(IMAGE_DIR / "limit_nuts.png")
     # the printable parts spread out, seen from above
     spread, x = {}, 0.0
     for name, solid in laid_out.items():
-        if name == "hinge_fit_test":
-            continue
         x_min, y_min, _, x_max, y_max, _ = solid.bounding_box()
-        key = {"base": "base", "lever": "lever", "upper_mouthpiece": "upper", "lower_tray": "lower", "limit_screw": "screw"}.get(name, "nut" if name.startswith("limit_nut") else "pin")
+        key = {"base": "base", "lever": "lever", "upper_mouthpiece": "upper", "lower_tray": "lower", "limit_screw": "screw"}.get(name, "nut" if name == "limit_nut" else "pin")
         spread[f"{key}_{name}"] = solid.rotate((0, 0, 90)).translate((x + (y_max - y_min) / 2, 0, 0))
         x += (y_max - y_min) + 8
     render(spread, str(IMAGE_DIR / "print_layout.png"), "top", size=(1600, 1100), zoom=1.3)

@@ -54,7 +54,7 @@ class Assembly:
 
         screw_length = parts.SCREW_KNOB_HEIGHT_MM + parts.SCREW_THREAD_LENGTH_MM + parts.SCREW_TIP_LENGTH_MM
         screw = parts.limit_screw(d).rotate((180, 0, 0)).translate((0, 0, screw_length))  # tip at z = 0, knob up
-        nut = parts.limit_nut(1, d).translate((0, 0, -d.nut_thickness_mm / 2))  # the loosest fit: no overlap by design
+        nut = parts.limit_nut(d).translate((0, 0, -d.nut_thickness_mm / 2))
         half_width = d.base_width_mm / 2
 
         def pin_at(centre_xz) -> Manifold:

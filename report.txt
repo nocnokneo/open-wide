@@ -4,11 +4,8 @@ Printable parts (as laid on the bed):
   upper_mouthpiece       73.0 x  57.3 x  14.4 mm    11.1 cm3 solid
   lower_tray             57.5 x  32.1 x   5.3 mm     3.8 cm3 solid
   limit_screw            27.0 x  26.1 x  59.0 mm     8.5 cm3 solid
-  limit_nut_1_dot        20.0 x  20.0 x  10.0 mm     2.9 cm3 solid
-  limit_nut_2_dot        20.0 x  20.0 x  10.0 mm     2.9 cm3 solid
-  limit_nut_3_dot        20.0 x  20.0 x  10.0 mm     3.0 cm3 solid
+  limit_nut              20.0 x  20.0 x  10.0 mm     2.9 cm3 solid
   pivot_pin_print_2      33.8 x  12.0 x   6.6 mm     1.3 cm3 solid
-  hinge_fit_test         30.7 x  12.0 x  14.0 mm     3.1 cm3 solid
 
 Hand force = 1.32 x force on the teeth (hand 85 mm from the pivot)
   handle gap at the grip, opening 12.5 mm: 26.2 mm (grip span 64.2 mm)
@@ -34,4 +31,4 @@ opening  lever turn  tray tilt  path error  interference
 
 Lower tray hinge: working tilt up to 51 deg relative to the lever tip; comes off only at 160-170 deg
 
-Limit screw: right-handed thread; nut radial clearances: 1 dot = 0.25 mm, 2 dot = 0.15 mm, 3 dot = 0.05 mm
+Limit screw: right-handed thread; nut radial clearance 0.15 mm

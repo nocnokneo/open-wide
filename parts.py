@@ -78,12 +78,6 @@ def _nut_pocket(d: Design) -> Manifold:
     return geom.extrude(Polygon(corners), -d.base_width_mm / 2 + floor, d.base_width_mm / 2 + 1)
 
 
-def hinge_fit_test(d: Design = DESIGN) -> Manifold:
-    """The first 35 mm of the lever tip: a ten-minute print to check the hinge fit on the lower tray."""
-    hinge = d.closed_hinge_xz
-    return lever(d) ^ geom.box((hinge[0] - 10, hinge[0] + 28), (hinge[1] - 15, hinge[1] + 15), (-20, 20))
-
-
 def lever(d: Design = DESIGN) -> Manifold:
     half = d.lever_thickness_mm / 2
     solid = geom.extrude_chamfered(d.lever_profile, -half, half, chamfer=0.8)
@@ -248,18 +242,13 @@ def limit_screw(d: Design = DESIGN) -> Manifold:
     return geom.union([knob, thread, tip])
 
 
-def limit_nut(dots: int, d: Design = DESIGN) -> Manifold:
-    """Square, split nut for the limit screw, printed flat; `dots` picks the fit and is marked on top."""
+def limit_nut(d: Design = DESIGN) -> Manifold:
+    """Square, split nut for the limit screw, printed flat."""
     half = d.nut_size_mm / 2
-    thread_radius = d.thread_major_diameter_mm / 2 + d.nut_thread_clearance_by_dots_mm[dots - 1]
+    thread_radius = d.thread_major_diameter_mm / 2 + d.nut_thread_radial_clearance_mm
     body = geom.extrude_chamfered(geom.rounded(rectangle(-half, -half, half, half), convex_radius=1.0), 0, d.nut_thickness_mm, chamfer=0.6)
     bore = _thread(thread_radius, d.nut_thickness_mm + 2, d).translate((0, 0, -1))
     lead_in = Manifold.cylinder(1.4, thread_radius + 0.2, thread_radius - 1.2, geom.CIRCLE_SEGMENTS)
     lead_out = Manifold.cylinder(1.4, thread_radius - 1.2, thread_radius + 0.2, geom.CIRCLE_SEGMENTS).translate((0, 0, d.nut_thickness_mm - 1.4))
     split = geom.box((0, half + 1), (-0.5, 0.5), (-1, d.nut_thickness_mm + 1))
-    marks = [geom.cylinder_z((-half + 2.6 + 2.8 * i, -half + 2.6), 0.9, d.nut_thickness_mm - 0.6, d.nut_thickness_mm + 1) for i in range(dots)]
-    return body - geom.union([bore, lead_in, lead_out, split, *marks])
-
-
-def nut_dots(d: Design = DESIGN) -> range:
-    return range(1, len(d.nut_thread_clearance_by_dots_mm) + 1)
+    return body - geom.union([bore, lead_in, lead_out, split])

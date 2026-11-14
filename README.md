@@ -9,7 +9,6 @@ A hand-squeezed jaw-opening (trismus) stretcher that prints in PETG with no hard
 This is a hobby design, not a medical device; the guide carries the full disclaimer.
 
 Status: one copy printed (Bambu P1S, PETG) and in use by the author.
-The split nuts and the right-handed screw are newer than that print.
 
 ## How it works
 
@@ -37,7 +36,7 @@ Results are in `report.txt`.
 
 * No two parts overlap at any opening from closed to 46 mm, including the pins, screw and nut.
 * The lower tray stays hooked at every tilt up to 150°, against a working maximum of 51°.
-* Every nut threads onto the screw, and the thread has the handedness set in `design.py`.
+* The nut threads onto the screw, and the thread has the handedness set in `design.py`.
 * Every STL is watertight and fits a 250 mm bed.
 
 By hand calculation, bending stress in the thinnest part of the lever (inside the mouth) is about 13 MPa at 100 N on the teeth, against roughly 45–50 MPa yield for PETG.
@@ -70,7 +69,7 @@ The model-sharing sites have no upload API, so update them by hand from that zip
 
 ## Numbers
 
-* Page visits and button clicks: GoatCounter, once `goatcounter_code` is set in `docs/_config.yml`.
+* Page visits and button clicks: <https://open-wide.goatcounter.com>.
 * STL downloads per release: `gh api repos/nocnokneo/open-wide/releases --jq '.[] | "\(.tag_name) \(.assets[0].download_count)"'`
 * Repository views and clones for the last 14 days: the repo's Insights → Traffic page.
 

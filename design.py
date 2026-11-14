@@ -89,9 +89,8 @@ class Design:
     thread_pitch_mm: float = 3.0
     thread_depth_mm: float = 1.3
     thread_is_left_handed: bool = False
-    # Radial thread clearance of each nut variant, by the number of dots marked on it.
-    # The nuts are split, so one that is tight on a given printer grips the screw like a spring.
-    nut_thread_clearance_by_dots_mm: tuple[float, ...] = (0.25, 0.15, 0.05)
+    # The nut is split, so it grips the screw like a spring and the setting does not drift.
+    nut_thread_radial_clearance_mm: float = 0.15
     nut_size_mm: float = 20.0
     nut_thickness_mm: float = 10.0
 

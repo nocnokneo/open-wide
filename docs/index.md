@@ -30,7 +30,7 @@ They are already turned the right way up, and none needs supports.
 | `upper_mouthpiece.stl` | 1 | Flat side down |
 | `lower_tray.stl` | 1 | Rims up |
 | `limit_screw.stl` | 1 | Standing on its knob. Add a brim |
-| `limit_nut_1_dot.stl`, `_2_dot`, `_3_dot` | 1 each | Flat. Three fits of the same nut; you keep one |
+| `limit_nut.stl` | 1 | Flat |
 | `pivot_pin_print_2.stl` | 2 | Lying on its flat. Print a spare |
 
 ![All the parts as they lie on the bed](images/print_layout.png)
@@ -42,30 +42,21 @@ Settings:
 * 25 % gyroid infill, or more.
 * Roughly 150 g of filament.
 
-`hinge_fit_test.stl` is the tip of the lever on its own.
-Print it with the lower tray first if you want to check the hinge fit before the long print.
-
 ## Assemble
 
 No tools needed.
 
-1. **Pick your nut.**
-   Try the limit screw in all three nuts and keep the tightest one it still turns in by hand.
-   The dots on top tell them apart: one dot is the loosest.
-   The nuts are split, so a snug one grips the screw and your setting stays put in a bag.
-
-   ![The three nuts, marked with one, two and three dots](images/limit_nuts.png)
-
-2. **Fit the screw.**
+1. **Fit the screw.**
    Slide the nut into the pocket near the end of the base handle, then screw the limit screw down through it from the top.
+   The nut is split so that it grips the screw and your setting stays put in a bag.
 
-3. **Join the handles.**
+2. **Join the handles.**
    Put the lever's round hump into the pocket under the base and push a pin through until it clicks.
 
-4. **Add the upper mouthpiece.**
+3. **Add the upper mouthpiece.**
    Push its tang into the socket at the front of the base and pin it.
 
-5. **Hook on the lower tray.**
+4. **Hook on the lower tray.**
    Fold the tray right back over the lever tip, rims up, and slide its bar into the hook.
 
    ![The lower tray folded back, its bar about to enter the hook](images/tray_fitting_1_hook_on.png)
@@ -119,7 +110,7 @@ Each fix below is one number in `design.py`; the [README](https://github.com/noc
 | Problem | Fix |
 | --- | --- |
 | The lower tray will not hook on, or does not swing freely | Raise `hook_mouth_clearance_mm` or `hook_inner_radius_mm` by 0.1 |
-| No nut gives a good fit on the screw | Change `nut_thread_clearance_by_dots_mm` |
+| The screw is too loose to hold its setting, or too stiff to turn | Lower or raise `nut_thread_radial_clearance_mm` by 0.05 to 0.1 |
 | The trays do not suit your teeth | Change `upper_arch`, `lower_arch` or the channel widths |
 
 Before it goes in your mouth, squeeze the assembled device hard against a folded towel between the trays.
