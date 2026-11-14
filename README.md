@@ -14,18 +14,15 @@ Status: one copy printed (Bambu P1S, PETG) and in use by the author.
 
 ## How it works
 
-It is modelled on what the OraStretch Press does, not on how it does it.
-
-| OraStretch feature | This design |
+| Goal | How |
 | --- | --- |
-| Lower mouthpiece follows the jaw's curved path | The main pivot is placed so the lower tray's hinge follows the modelled jaw path within 0.8 mm from 18 to 42 mm of opening |
-| Mouthpieces stay flat on the teeth | The lower tray swings freely on a hinge under the teeth and levels itself |
-| Contoured mouthpieces | Horseshoe trays with a rimmed channel for the teeth |
-| Adjustable limit | Thumbscrew between the handles, with a millimetre scale; hard stop at 46 mm |
+| The lower mouthpiece follows the jaw's curved path | The main pivot is placed so the lower tray's hinge follows the modelled jaw path within 0.8 mm from 18 to 42 mm of opening |
+| The mouthpieces stay flat on the teeth | The lower tray swings freely on a hinge under the teeth and levels itself |
+| The mouthpieces fit the teeth | Horseshoe trays with a rimmed channel for the teeth |
+| The opening has an adjustable limit | Thumbscrew between the handles, with a millimetre scale; hard stop at 46 mm |
 
-The OraStretch gets its curved path from a curved "piston" arm that slides through a channel in the base (US 2007/0287598 A1).
-That joint carries a large sideways load, and in printed plastic it would lose a third or more of the squeeze to friction and could stick open.
-Here every joint is a pin or a hook, so nothing slides under load.
+Every joint is a pin or a hook, so nothing slides under load.
+A sliding joint would carry a large sideways load here, and in printed plastic it would lose a third or more of the squeeze to friction and could stick open.
 
 The jaw is modelled as rotating about a point 78 mm behind and 4 mm below the upper incisal edge, which gives the usual path: straight down at first, then back by about 14 mm at 45 mm of opening.
 

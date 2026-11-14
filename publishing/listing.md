@@ -22,7 +22,7 @@ The listing stays short and sends readers to the guide, which is the single sour
 | Material | PETG |
 | Photos | `docs/images/photo.jpg` first, then `assembly_30mm.png`, `sections_overview.png`, `print_layout.png`, `tray_fitting_1_hook_on.png`, `scale_and_limit_screw.png` from `docs/images/` |
 
-Keep "OraStretch" and other product names out of the title and tags: they are trademarks.
+Keep the names of commercial jaw stretchers out of the listing: they are trademarks.
 
 ## Description
 
