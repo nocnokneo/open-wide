@@ -7,6 +7,7 @@ import shapely
 import trimesh
 from manifold3d import Manifold
 
+import geom
 import parts
 from assembly import Assembly, about_lateral_axis
 from design import DESIGN as d
@@ -43,6 +44,7 @@ def printable_parts() -> dict[str, Manifold]:
         "limit_screw": parts.limit_screw(d),
         "limit_nut": parts.limit_nut(d),
         "pivot_pin_print_2": parts.snap_pin(d.base_width_mm, d),
+        "pad_templates": parts.pad_templates(d),
     }
 
 
@@ -133,9 +135,12 @@ def write_renders(assembly: Assembly, laid_out: dict[str, Manifold]):
     wide = {**assembly.posed(d.max_opening_mm), **assembly.hardware(d.max_opening_mm)}
     render(wide, str(IMAGE_DIR / "mouth_end_46mm_section.png"), "side", clip_y=0.01, focus=(2, -22, 80), size=(1500, 900))
     _write_tray_fitting(assembly)
+    _write_pads()
     # the printable parts spread out, seen from above
     spread, x = {}, 0.0
     for name, solid in laid_out.items():
+        if name == "pad_templates":  # optional, shown with the pads instead
+            continue
         x_min, y_min, _, x_max, y_max, _ = solid.bounding_box()
         key = {"base": "base", "lever": "lever", "upper_mouthpiece": "upper", "lower_tray": "lower", "limit_screw": "screw"}.get(name, "nut" if name == "limit_nut" else "pin")
         spread[f"{key}_{name}"] = solid.rotate((0, 0, 90)).translate((x + (y_max - y_min) / 2, 0, 0))
@@ -160,6 +165,21 @@ def _write_tray_fitting(assembly: Assembly):
         shift = hinge - hinge_in_tray + slide_mm * out
         tray = about_lateral_axis(assembly.lower_tray, hinge_in_tray, -np.radians(tilt_deg)).translate((shift[0], 0, shift[1]))
         render({"lever": assembly.lever_closed, "lower": tray}, str(IMAGE_DIR / f"{name}.png"), "iso", size=(1100, 800), zoom=1.0, camera=[(hinge[0] - 95, -120, hinge[1] + 70), (hinge[0] + 8, 0, hinge[1] - 4), (0, 0, 1)])
+
+
+def _write_pads(pad_thickness_mm: float = 1.5):
+    """Both trays, rims up, with a pad in the tooth channel and the template it is cut round in front."""
+    pads = {letter: geom.extrude(shape, 0, pad_thickness_mm) for letter, shape in parts.tooth_pad_shapes(d).items()}
+    trays = {"U": ("upper", parts.upper_mouthpiece(d)), "L": ("lower", parts.lower_tray(d).rotate((180, 0, 0)))}
+    scene, pitch_mm = {}, 66.0
+    for i, (letter, (colour_key, tray)) in enumerate(trays.items()):
+        y = -i * pitch_mm
+        scene[f"{colour_key}_{letter}"] = tray.translate((0, y, 0))
+        scene[f"pad_{letter}"] = pads[letter].translate((0, y, 0))
+        scene[f"template_{letter}"] = parts.pad_template(letter, d).translate((-42, y, 0))
+    centre = (-12, -pitch_mm / 2, 0)
+    render(scene, str(IMAGE_DIR / "pads.png"), "iso", size=(1600, 1300), zoom=1.0, camera=[(centre[0] - 165, centre[1], 320), centre, (1, 0, 0)])
+    _trim_margins(IMAGE_DIR / "pads.png")
 
 
 def _write_sections_overview():

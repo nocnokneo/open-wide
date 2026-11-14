@@ -101,6 +101,35 @@ def _clip_rear(shape, depth_mm: float):
     return shape.intersection(rectangle(-depth_mm, -60, 60, 60))
 
 
+def tooth_channel(arch, channel_width_mm: float, d: Design = DESIGN):
+    """Plan shape of the floor the teeth rest on, between a tray's rims."""
+    return _clip_rear(_arch_centreline(arch, d.tray_depth_mm).buffer(channel_width_mm / 2), d.tray_depth_mm)
+
+
+PAD_TEMPLATE_THICKNESS_MM = 2.0
+
+
+def tooth_pad_shapes(d: Design = DESIGN) -> dict[str, Polygon]:
+    """Plan shape of the pad for each tray, keyed by the letter engraved on its template."""
+    channels = {"U": tooth_channel(d.upper_arch, d.upper_channel_width_mm, d), "L": tooth_channel(d.lower_arch, d.lower_channel_width_mm, d)}
+    return {letter: channel.buffer(-d.pad_to_rim_gap_mm) for letter, channel in channels.items()}
+
+
+def pad_template(letter: str, d: Design = DESIGN) -> Manifold:
+    """Plate to trace round when cutting a tooth pad from sheet, in the frame of its tray."""
+    pad = tooth_pad_shapes(d)[letter]
+    label = shapely.affinity.rotate(geom.text_shape(letter, 6.0), -90, origin=(0, 0))  # upright with the front teeth at the top
+    x_min, y_min, x_max, y_max = label.bounds
+    label = shapely.affinity.translate(label, -(x_min + x_max) / 2, -(y_min + y_max) / 2)
+    return geom.extrude(pad, 0, PAD_TEMPLATE_THICKNESS_MM) - geom.extrude(label, PAD_TEMPLATE_THICKNESS_MM - 0.6, PAD_TEMPLATE_THICKNESS_MM + 1)
+
+
+def pad_templates(d: Design = DESIGN) -> Manifold:
+    """Both pad templates side by side, as printed."""
+    pitch_mm = max(pad.bounds[3] - pad.bounds[1] for pad in tooth_pad_shapes(d).values()) + 4
+    return geom.union([pad_template(letter, d).translate((0, i * pitch_mm, 0)) for i, letter in enumerate(tooth_pad_shapes(d))])
+
+
 def _plate(shape, z_back: float, z_tooth_side: float) -> Manifold:
     """Tray floor with its back edge (the face away from the teeth) broken."""
     step = 0.6 if z_tooth_side > z_back else -0.6
@@ -123,7 +152,7 @@ def upper_mouthpiece(d: Design = DESIGN) -> Manifold:
     centreline = _arch_centreline(d.upper_arch, d.tray_depth_mm)
     half_channel = d.upper_channel_width_mm / 2
     outline = _clip_rear(centreline.buffer(half_channel + d.rim_width_mm), d.tray_depth_mm)
-    channel = centreline.buffer(half_channel)
+    channel = tooth_channel(d.upper_arch, d.upper_channel_width_mm, d)
     plate_shape = geom.rounded(outline.convex_hull, convex_radius=2.0)
     plate = _plate(plate_shape, -d.tray_floor_mm, 0)
     rims = _rim(outline.difference(channel), 0, d.rim_height_mm)
@@ -165,7 +194,7 @@ def lower_tray(d: Design = DESIGN) -> Manifold:
     centreline = _arch_centreline(d.lower_arch, d.tray_depth_mm)
     half_channel = d.lower_channel_width_mm / 2
     outline = _clip_rear(centreline.buffer(half_channel + d.rim_width_mm), d.tray_depth_mm)
-    channel = centreline.buffer(half_channel)
+    channel = tooth_channel(d.lower_arch, d.lower_channel_width_mm, d)
     web = _clip_rear(Polygon(centreline.coords), d.tray_depth_mm).intersection(rectangle(-60, -60, -6.0, 60))
     hinge_x, hinge_z = d.hinge_in_tray_xz
     half_slot = d.slot_width_mm / 2

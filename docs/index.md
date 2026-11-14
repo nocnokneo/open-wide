@@ -32,6 +32,7 @@ They are already turned the right way up, and none needs supports.
 | `limit_screw.stl` | 1 | Standing on its knob. Add a brim |
 | `limit_nut.stl` | 1 | Flat |
 | `pivot_pin_print_2.stl` | 2 | Lying on its flat. Print a spare |
+| `pad_templates.stl` | Optional | Flat. Only needed for cutting [pads](#pads) |
 
 ![All the parts as they lie on the bed](images/print_layout.png)
 
@@ -89,12 +90,36 @@ Check it once: squeeze to the stop and measure between the two tooth surfaces at
 * Stop at sharp or unexpected pain.
 * Do not use it with loose teeth, a recent jaw fracture or surgery, or a jaw infection unless your clinician has cleared it.
 
-### Optional extras
+### Rubber band
 
-* **A rubber band** around both arms just behind the mouthpieces, as in the photo at the top, pulls the device shut when you let go.
-* **Pads.** Bare PETG suits some teeth and not others.
-  If it feels hard, line the channels with 1 to 2 mm self-adhesive silicone or foam strip, or a strip cut from a boil-and-bite mouthguard.
-  Pads add twice their thickness to the real opening.
+A rubber band around both arms just behind the mouthpieces, as in the photo at the top, pulls the device shut when you let go.
+It is optional.
+
+### Pads
+
+Bare PETG suits some teeth and not others.
+If it feels hard, cut a soft pad for each tray.
+
+![Each tray with a pad in its channel, and the template the pad is cut round](images/pads.png)
+
+1. Print `pad_templates.stl`.
+   It holds two flat templates, marked U for the upper tray and L for the lower.
+2. Lay a template on the sheet, trace round it with a fine pen and cut along the line with sharp scissors.
+3. Press each pad into its channel, between the rims.
+   Nothing but the fit holds it, so it lifts out for washing.
+   If a pad is loose, cut the next one just outside the line.
+
+Sheet to cut them from:
+
+| Sheet | Notes |
+| --- | --- |
+| Food-grade silicone, 1.5 mm (1/16 in), about 50A hardness, no adhesive backing | Soft and grippy. Look for one that cites FDA 21 CFR 177.2600 |
+| Soft EVA sold for dental thermoforming ("soft splint" sheets), 1.5 to 2 mm | Made for use in the mouth, but firmer |
+
+* Avoid adhesive-backed sheet: the glue is not rated for contact with food or the mouth.
+* Pads add twice their thickness to the real opening, and to the 13 mm you need to get the device in.
+* Check both pads are seated before every use and replace a torn one.
+  A loose piece in the mouth is a choking hazard.
 
 ### Cleaning
 
