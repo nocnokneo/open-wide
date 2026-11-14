@@ -25,16 +25,21 @@ jobs:
           python3 -m http.server --directory _site 8000 &
           curl --retry 10 --retry-connrefused --silent --output /dev/null http://localhost:8000/open-wide/
           google-chrome --headless --no-sandbox --no-pdf-header-footer --virtual-time-budget=10000 \
-            --print-to-pdf="open-wide-${GITHUB_REF_NAME}-guide.pdf" "http://localhost:8000/open-wide/?release=${GITHUB_REF_NAME}"
+            --print-to-pdf=open-wide-guide.pdf "http://localhost:8000/open-wide/?release=${GITHUB_REF_NAME}"
 
       - name: Zip the STLs with the guide
-        run: zip --junk-paths "open-wide-${GITHUB_REF_NAME}.zip" stl/*.stl LICENSE-CC-BY-4.0 open-wide-*-guide.pdf
+        run: |
+          folder="open-wide-${GITHUB_REF_NAME}"
+          mkdir "$folder"
+          cp stl/*.stl LICENSE-CC-BY-4.0 open-wide-guide.pdf "$folder"
+          zip --recurse-paths open-wide.zip "$folder"
 
       - name: Publish the release
         if: github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" open-wide-*.zip open-wide-*-guide.pdf --title "$GITHUB_REF_NAME" --generate-notes
+        # the file names carry no version, so links to releases/latest/download/<name> keep working
+        run: gh release create "$GITHUB_REF_NAME" open-wide.zip open-wide-guide.pdf --title "$GITHUB_REF_NAME" --generate-notes
 
       - name: Keep the files from a dry run
         if: github.ref_type != 'tag'
@@ -42,5 +47,5 @@ jobs:
         with:
           name: release-files
           path: |
-            open-wide-*.zip
-            open-wide-*-guide.pdf
+            open-wide.zip
+            open-wide-guide.pdf

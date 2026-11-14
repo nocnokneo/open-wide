@@ -22,7 +22,7 @@ It is meant for the daily stretching that jaw-opening rehab (trismus) calls for.
 
 ## Print
 
-Download the STLs from the [latest release]({{ site.repository_url }}/releases/latest){: data-goatcounter-click="download-stls"}.
+[Download the STLs]({{ site.stl_zip_url }}){: data-goatcounter-click="download-stls"}.
 They are already turned the right way up, and none needs supports.
 
 | File | Copies | How it sits on the bed |

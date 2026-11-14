@@ -3,6 +3,7 @@ description: A 3D-printable jaw stretcher for trismus rehab. No screws, no sprin
 url: https://nocnokneo.github.io
 baseurl: /open-wide
 repository_url: https://github.com/nocnokneo/open-wide
+stl_zip_url: https://github.com/nocnokneo/open-wide/releases/latest/download/open-wide.zip
 markdown: kramdown
 lang: en
 author: Taylor Braun-Jones
