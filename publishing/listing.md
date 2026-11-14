@@ -6,8 +6,8 @@ The listing stays short and sends readers to the guide, which is the single sour
 ## For each release
 
 1. Push the tag and wait for the GitHub release to appear.
-2. Download the STL zip from the release.
-3. On each site, replace the model files with the ones from the zip and add a line to the listing's change notes.
+2. Download the zip from the release.
+3. On each site, replace the model files and the guide PDF with the ones from the zip and add a line to the listing's change notes.
 4. On MakerWorld, also re-slice in Bambu Studio and upload the project as the print profile.
 
 ## Fields

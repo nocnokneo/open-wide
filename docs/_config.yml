@@ -4,6 +4,18 @@ url: https://nocnokneo.github.io
 baseurl: /open-wide
 repository_url: https://github.com/nocnokneo/open-wide
 markdown: kramdown
+lang: en
+author: Taylor Braun-Jones
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+defaults:
+  - scope:
+      path: google3ab709dc3f770455.html # Google Search Console ownership proof; must stay
+    values:
+      sitemap: false
 
 # Visit counting with GoatCounter (no cookies, no personal data).
 # Sign up at https://www.goatcounter.com/signup and put your site code here; leave empty to count nothing.

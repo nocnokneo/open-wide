@@ -63,13 +63,13 @@ uv pip install --python .venv/bin/python -r requirements.txt
 
 ## Releasing
 
-Pushing a tag `v1`, `v2`, … publishes a GitHub release with the STLs zipped (`.github/workflows/release.yml`).
+Pushing a tag `v1`, `v2`, … publishes a GitHub release (`.github/workflows/release.yml`) with two files: the guide printed to PDF, and a zip of the STLs with that PDF.
 The model-sharing sites have no upload API, so update them by hand from that zip: see `publishing/listing.md`.
 
 ## Numbers
 
 * Page visits and button clicks: <https://open-wide.goatcounter.com>.
-* STL downloads per release: `gh api repos/nocnokneo/open-wide/releases --jq '.[] | "\(.tag_name) \(.assets[0].download_count)"'`
+* Downloads of each release file: `gh api repos/nocnokneo/open-wide/releases --jq '.[] | .tag_name as $tag | .assets[] | "\($tag) \(.name) \(.download_count)"'`
 * Repository views and clones for the last 14 days: the repo's Insights → Traffic page.
 
 ## License

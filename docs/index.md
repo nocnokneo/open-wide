@@ -1,5 +1,7 @@
 ---
 layout: default
+title: "Open Wide: 3D-printed jaw stretcher for trismus rehab"
+image: /images/photo.jpg
 ---
 
 > **This is a hobby design, not a medical device.**
@@ -20,7 +22,7 @@ It is meant for the daily stretching that jaw-opening rehab (trismus) calls for.
 
 ## Print
 
-Download the STLs with the button at the top of the page.
+Download the STLs from the [latest release]({{ site.repository_url }}/releases/latest){: data-goatcounter-click="download-stls"}.
 They are already turned the right way up, and none needs supports.
 
 | File | Copies | How it sits on the bed |

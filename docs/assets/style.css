@@ -188,3 +188,46 @@ footer {
 @media (max-width: 52rem) {
   .hero { grid-template-columns: 1fr; padding-top: 2.25rem; gap: 1.5rem; }
 }
+
+.print-only { display: none; }
+
+@media print {
+  :root {
+    --page: #ffffff;
+    --surface: #ffffff;
+    --ink: #1f2430;
+    --muted: #5d6675;
+    --line: #d9d9d9;
+    --accent: #a3500f;
+    --note: #fff4e5;
+    --note-line: #e9b77a;
+  }
+
+  @page { margin: 15mm; }
+
+  body { font-size: 10.5pt; }
+
+  nav.contents, .actions, .screen-only { display: none; }
+
+  .print-only { display: block; margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+  .hero { max-width: none; padding: 0 0 1rem; }
+
+  .hero-photo { box-shadow: none; }
+
+  h1 { font-size: 3rem; }
+
+  main, footer { max-width: none; padding-inline: 0; }
+
+  main { padding-bottom: 1rem; }
+
+  h2 { margin-top: 1.8rem; }
+
+  h2, h3 { break-after: avoid; }
+
+  img, blockquote, tr, li { break-inside: avoid; }
+
+  main img { width: auto; max-width: 100%; max-height: 80mm; margin-inline: auto; }
+
+  .table-scroll, main > table { display: table; }
+}

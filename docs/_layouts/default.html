@@ -3,11 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ site.title }}: a printable jaw stretcher</title>
-  <meta name="description" content="{{ site.description }}">
-  <meta property="og:title" content="{{ site.title }}: a printable jaw stretcher">
-  <meta property="og:description" content="{{ site.description }}">
-  <meta property="og:image" content="{{ '/images/photo.jpg' | absolute_url }}">
+  <title>{{ page.title }}</title>
+  {% seo title=false %}
   <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
 </head>
 <body>
@@ -20,6 +17,7 @@
         <a class="button primary" href="{{ site.repository_url }}/releases/latest" data-goatcounter-click="download-stls">Download the STLs</a>
         <a class="button" href="{{ site.repository_url }}" data-goatcounter-click="source-on-github">Source on GitHub</a>
       </p>
+      <p class="print-only">Printed copy<span id="release"></span>. The latest version is at {{ site.url | remove: 'https://' }}{{ site.baseurl }}</p>
     </div>
     <img class="hero-photo" src="{{ '/images/photo.jpg' | relative_url }}" alt="The printed jaw stretcher: two black handles, a thumbscrew and two mouthpieces">
   </header>
@@ -29,7 +27,7 @@
   </main>
   <footer>
     <p>Models, images and this guide: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code: MIT. <a href="{{ site.repository_url }}">{{ site.repository_url | remove: 'https://' }}</a></p>
-    {% if site.goatcounter_code %}<p>This page counts visits with <a href="https://www.goatcounter.com/">GoatCounter</a>: no cookies, no personal data.</p>{% endif %}
+    {% if site.goatcounter_code %}<p class="screen-only">This page counts visits with <a href="https://www.goatcounter.com/">GoatCounter</a>: no cookies, no personal data.</p>{% endif %}
   </footer>
   {% if site.goatcounter_code %}<script data-goatcounter="https://{{ site.goatcounter_code }}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>{% endif %}
   <script>
@@ -41,6 +39,9 @@
       link.textContent = heading.textContent;
       nav.append(link);
     }
+    // the release workflow prints this page to PDF with ?release=<tag>
+    const release = new URLSearchParams(location.search).get("release");
+    if (release) document.getElementById("release").textContent = " of release " + release;
   </script>
 </body>
 </html>
