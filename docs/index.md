@@ -110,23 +110,15 @@ Print `tooth_pads.stl` in TPU and press each pad into its channel between the ri
 The usual 95A TPU is firm; 85A is softer.
 
 **Cut the pads from sheet.**
+Use adhesive-backed silicone sheet, 1.5 mm (1/16 in) thick and 50A hardness or softer.
+Food-grade sheet cites FDA 21 CFR 177.2600.
 Print `tooth_pads.stl` in any material and use the two prints as templates.
 
-1. Lay a template on the sheet, trace round it with a fine pen and cut along the line with sharp scissors.
-2. Press each pad into its channel.
-   If it is loose, cut the next one just outside the line.
+1. Lay a template on the sheet's liner, trace round it with a fine pen and cut along the line with sharp scissors.
+2. Peel off the liner and stick each pad into its channel.
+   The tray must be clean and dry, and the bond takes hours to build, so do it the day before you use it.
 
-| Sheet | Notes |
-| --- | --- |
-| Food-grade silicone, 1.5 mm (1/16 in), about 50A hardness | The softest option. Look for one that cites FDA 21 CFR 177.2600 |
-| Soft EVA sold for dental thermoforming ("soft splint" sheets), 1.5 to 2 mm | Made for use in the mouth, but about as firm as TPU |
-
-Silicone sheet comes plain or with an adhesive backing.
-
-* Plain sheet is held by the fit alone and lifts out for washing.
-* Adhesive-backed sheet stays put better.
-  Trace on its liner, and stick it to a clean, dry tray the day before you use it, because the bond takes hours to build.
-  Its glue is not rated for contact with food, though only the edge of the glue line is exposed.
+The sheet's glue is not rated for contact with food, though only the edge of the glue line is exposed.
 
 Whichever you use:
 
