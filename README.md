@@ -6,7 +6,9 @@ A hand-squeezed jaw-opening (trismus) stretcher that prints in PETG with no hard
 
 **Printing, assembly and use: <https://nocnokneo.github.io/open-wide/>**
 
-This is a hobby design, not a medical device; the guide carries the full disclaimer.
+> **This is a hobby design, not a medical device.**
+> Nobody has tested, certified or clinically reviewed it, and stretching a jaw can cause injury.
+> Build and use it at your own risk, and ask your clinician first.
 
 Status: one copy printed (Bambu P1S, PETG) and in use by the author.
 
