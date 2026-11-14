@@ -53,7 +53,8 @@ class Design:
     tray_depth_mm: float = 25.0  # how far the trays reach back from the incisal edge
     upper_channel_width_mm: float = 12.0
     lower_channel_width_mm: float = 11.0
-    pad_to_rim_gap_mm: float = 0.2  # all round a pad cut exactly to its template
+    pad_thickness_mm: float = 1.5
+    pad_to_rim_gap_mm: float = 0.2  # all round the pad
     # dental arch through the tooth centres: (depth behind the incisal edge, half-width)
     upper_arch: tuple[tuple[float, float], ...] = ((0, 0), (1, 5.5), (3, 10), (6, 14), (9, 16.5), (13, 18), (17, 19), (21, 20), (25, 21), (30, 22))
     lower_arch: tuple[tuple[float, float], ...] = ((0, 0), (1, 5), (2.5, 8.5), (4, 11), (6, 13), (9, 15), (12, 16.5), (16, 18.3), (19, 19.5), (25, 21.5), (30, 23))

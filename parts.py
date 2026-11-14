@@ -106,28 +106,28 @@ def tooth_channel(arch, channel_width_mm: float, d: Design = DESIGN):
     return _clip_rear(_arch_centreline(arch, d.tray_depth_mm).buffer(channel_width_mm / 2), d.tray_depth_mm)
 
 
-PAD_TEMPLATE_THICKNESS_MM = 2.0
-
-
 def tooth_pad_shapes(d: Design = DESIGN) -> dict[str, Polygon]:
-    """Plan shape of the pad for each tray, keyed by the letter engraved on its template."""
+    """Plan shape of the pad for each tray, keyed by the letter engraved on it."""
     channels = {"U": tooth_channel(d.upper_arch, d.upper_channel_width_mm, d), "L": tooth_channel(d.lower_arch, d.lower_channel_width_mm, d)}
     return {letter: channel.buffer(-d.pad_to_rim_gap_mm) for letter, channel in channels.items()}
 
 
-def pad_template(letter: str, d: Design = DESIGN) -> Manifold:
-    """Plate to trace round when cutting a tooth pad from sheet, in the frame of its tray."""
+def tooth_pad(letter: str, d: Design = DESIGN) -> Manifold:
+    """Pad for one tray, in the frame of that tray: printed soft, or printed hard as a template for cutting sheet.
+
+    The lettered face goes against the tray, so the teeth get the smooth face off the bed.
+    """
     pad = tooth_pad_shapes(d)[letter]
     label = shapely.affinity.rotate(geom.text_shape(letter, 6.0), -90, origin=(0, 0))  # upright with the front teeth at the top
     x_min, y_min, x_max, y_max = label.bounds
     label = shapely.affinity.translate(label, -(x_min + x_max) / 2, -(y_min + y_max) / 2)
-    return geom.extrude(pad, 0, PAD_TEMPLATE_THICKNESS_MM) - geom.extrude(label, PAD_TEMPLATE_THICKNESS_MM - 0.6, PAD_TEMPLATE_THICKNESS_MM + 1)
+    return geom.extrude(pad, 0, d.pad_thickness_mm) - geom.extrude(label, d.pad_thickness_mm - 0.4, d.pad_thickness_mm + 1)
 
 
-def pad_templates(d: Design = DESIGN) -> Manifold:
-    """Both pad templates side by side, as printed."""
+def tooth_pads(d: Design = DESIGN) -> Manifold:
+    """Both pads side by side, as printed."""
     pitch_mm = max(pad.bounds[3] - pad.bounds[1] for pad in tooth_pad_shapes(d).values()) + 4
-    return geom.union([pad_template(letter, d).translate((0, i * pitch_mm, 0)) for i, letter in enumerate(tooth_pad_shapes(d))])
+    return geom.union([tooth_pad(letter, d).translate((0, i * pitch_mm, 0)) for i, letter in enumerate(tooth_pad_shapes(d))])
 
 
 def _plate(shape, z_back: float, z_tooth_side: float) -> Manifold:

@@ -34,7 +34,7 @@ They are already turned the right way up, and none needs supports.
 | `limit_screw.stl` | 1 | Standing on its knob. Add a brim |
 | `limit_nut.stl` | 1 | Flat |
 | `pivot_pin_print_2.stl` | 2 | Lying on its flat. Print a spare |
-| `pad_templates.stl` | Optional | Flat. Only needed for cutting [pads](#pads) |
+| `tooth_pads.stl` | Optional | Flat. See [Pads](#pads) |
 
 ![All the parts as they lie on the bed](images/print_layout.png)
 
@@ -100,25 +100,36 @@ It is optional.
 ### Pads
 
 Bare PETG suits some teeth and not others.
-If it feels hard, cut a soft pad for each tray.
+If it feels hard, add a soft pad to each tray.
+`tooth_pads.stl` holds the two pad shapes, marked U for the upper tray and L for the lower, and there are two ways to use it.
 
-![Each tray with a pad in its channel, and the template the pad is cut round](images/pads.png)
+![Each tray with a pad in its channel, and the two pads as printed](images/pads.png)
 
-1. Print `pad_templates.stl`.
-   It holds two flat templates, marked U for the upper tray and L for the lower.
-2. Lay a template on the sheet, trace round it with a fine pen and cut along the line with sharp scissors.
-3. Press each pad into its channel, between the rims.
-   Nothing but the fit holds it, so it lifts out for washing.
-   If a pad is loose, cut the next one just outside the line.
+**Print the pads.**
+Print `tooth_pads.stl` in TPU and press each pad into its channel between the rims, letter side down.
+The usual 95A TPU is firm; 85A is softer.
 
-Sheet to cut them from:
+**Cut the pads from sheet.**
+Print `tooth_pads.stl` in any material and use the two prints as templates.
+
+1. Lay a template on the sheet, trace round it with a fine pen and cut along the line with sharp scissors.
+2. Press each pad into its channel.
+   If it is loose, cut the next one just outside the line.
 
 | Sheet | Notes |
 | --- | --- |
-| Food-grade silicone, 1.5 mm (1/16 in), about 50A hardness, no adhesive backing | Soft and grippy. Look for one that cites FDA 21 CFR 177.2600 |
-| Soft EVA sold for dental thermoforming ("soft splint" sheets), 1.5 to 2 mm | Made for use in the mouth, but firmer |
+| Food-grade silicone, 1.5 mm (1/16 in), about 50A hardness | The softest option. Look for one that cites FDA 21 CFR 177.2600 |
+| Soft EVA sold for dental thermoforming ("soft splint" sheets), 1.5 to 2 mm | Made for use in the mouth, but about as firm as TPU |
 
-* Avoid adhesive-backed sheet: the glue is not rated for contact with food or the mouth.
+Silicone sheet comes plain or with an adhesive backing.
+
+* Plain sheet is held by the fit alone and lifts out for washing.
+* Adhesive-backed sheet stays put better.
+  Trace on its liner, and stick it to a clean, dry tray the day before you use it, because the bond takes hours to build.
+  Its glue is not rated for contact with food, though only the edge of the glue line is exposed.
+
+Whichever you use:
+
 * Pads add twice their thickness to the real opening, and to the 13 mm you need to get the device in.
 * Check both pads are seated before every use and replace a torn one.
   A loose piece in the mouth is a choking hazard.

@@ -44,7 +44,7 @@ def printable_parts() -> dict[str, Manifold]:
         "limit_screw": parts.limit_screw(d),
         "limit_nut": parts.limit_nut(d),
         "pivot_pin_print_2": parts.snap_pin(d.base_width_mm, d),
-        "pad_templates": parts.pad_templates(d),
+        "tooth_pads": parts.tooth_pads(d),
     }
 
 
@@ -139,7 +139,7 @@ def write_renders(assembly: Assembly, laid_out: dict[str, Manifold]):
     # the printable parts spread out, seen from above
     spread, x = {}, 0.0
     for name, solid in laid_out.items():
-        if name == "pad_templates":  # optional, shown with the pads instead
+        if name == "tooth_pads":  # optional, shown in their own picture
             continue
         x_min, y_min, _, x_max, y_max, _ = solid.bounding_box()
         key = {"base": "base", "lever": "lever", "upper_mouthpiece": "upper", "lower_tray": "lower", "limit_screw": "screw"}.get(name, "nut" if name == "limit_nut" else "pin")
@@ -167,16 +167,16 @@ def _write_tray_fitting(assembly: Assembly):
         render({"lever": assembly.lever_closed, "lower": tray}, str(IMAGE_DIR / f"{name}.png"), "iso", size=(1100, 800), zoom=1.0, camera=[(hinge[0] - 95, -120, hinge[1] + 70), (hinge[0] + 8, 0, hinge[1] - 4), (0, 0, 1)])
 
 
-def _write_pads(pad_thickness_mm: float = 1.5):
-    """Both trays, rims up, with a pad in the tooth channel and the template it is cut round in front."""
-    pads = {letter: geom.extrude(shape, 0, pad_thickness_mm) for letter, shape in parts.tooth_pad_shapes(d).items()}
+def _write_pads():
+    """Both trays, rims up, with a pad in the tooth channel, and the pads as printed in front."""
+    pads = {letter: geom.extrude(shape, 0, d.pad_thickness_mm) for letter, shape in parts.tooth_pad_shapes(d).items()}
     trays = {"U": ("upper", parts.upper_mouthpiece(d)), "L": ("lower", parts.lower_tray(d).rotate((180, 0, 0)))}
     scene, pitch_mm = {}, 66.0
     for i, (letter, (colour_key, tray)) in enumerate(trays.items()):
         y = -i * pitch_mm
         scene[f"{colour_key}_{letter}"] = tray.translate((0, y, 0))
-        scene[f"pad_{letter}"] = pads[letter].translate((0, y, 0))
-        scene[f"template_{letter}"] = parts.pad_template(letter, d).translate((-42, y, 0))
+        scene[f"pad_{letter}_fitted"] = pads[letter].translate((0, y, 0))
+        scene[f"pad_{letter}_printed"] = parts.tooth_pad(letter, d).translate((-42, y, 0))
     centre = (-12, -pitch_mm / 2, 0)
     render(scene, str(IMAGE_DIR / "pads.png"), "iso", size=(1600, 1300), zoom=1.0, camera=[(centre[0] - 165, centre[1], 320), centre, (1, 0, 0)])
     _trim_margins(IMAGE_DIR / "pads.png")

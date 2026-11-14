@@ -5,7 +5,7 @@ import pyvista as pv
 from manifold3d import Manifold
 
 pv.OFF_SCREEN = True
-COLOURS = {"base": "#3b6ea5", "lever": "#e08a2e", "upper": "#e8e4d8", "lower": "#cfd8dc", "screw": "#7a8c3a", "nut": "#7a8c3a", "pin": "#444444", "pad": "#c0504d", "template": "#6b8e9e"}
+COLOURS = {"base": "#3b6ea5", "lever": "#e08a2e", "upper": "#e8e4d8", "lower": "#cfd8dc", "screw": "#7a8c3a", "nut": "#7a8c3a", "pin": "#444444", "pad": "#c0504d"}
 
 
 def to_polydata(solid: Manifold) -> pv.PolyData:
