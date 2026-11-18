@@ -141,9 +141,9 @@ def _plate(shape, z_back: float, z_tooth_side: float) -> Manifold:
 
 
 def tray_rims(d: Design = DESIGN, slice_mm: float = 0.1) -> Manifold:
-    """Both rims standing on z = 0 with rounded top edges. The inner rim leans over the channel near its top to hold a pad down.
+    """Both rims standing on z = 0 with rounded top edges. Each leans over the channel to hold a pad down by its edges.
 
-    The lip grows at 45 degrees from underneath, so it prints without support with the rims pointing up.
+    The lips grow at 45 degrees from underneath, so they print without support with the rims pointing up.
     """
     plan = tray_plan(d)
     edge_starts_mm = d.rim_height_mm - d.rim_edge_radius_mm
@@ -157,8 +157,9 @@ def tray_rims(d: Design = DESIGN, slice_mm: float = 0.1) -> Manifold:
 
 
 def _rim_section(plan: TrayPlan, lip_mm: float, edge_inset_mm: float):
-    lip = plan.inner_rim.buffer(lip_mm).intersection(plan.tooth_channel)
-    rims = geom.rounded(geom.union_2d([plan.inner_rim, plan.outer_rim, lip]), convex_radius=0.5)
+    bare_rims = geom.union_2d([plan.inner_rim, plan.outer_rim])
+    lips = bare_rims.buffer(lip_mm).intersection(plan.tooth_channel)
+    rims = geom.rounded(geom.union_2d([bare_rims, lips]), convex_radius=0.5)
     return rims.buffer(-edge_inset_mm)
 
 

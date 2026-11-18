@@ -1,7 +1,7 @@
 Printable parts (as laid on the bed):
   base                  211.0 x  38.0 x  24.8 mm    96.9 cm3 solid
   lever                 240.8 x  56.4 x  14.0 mm    66.5 cm3 solid
-  upper_mouthpiece       73.0 x  57.9 x  14.4 mm    11.1 cm3 solid
+  upper_mouthpiece       73.0 x  57.9 x  14.4 mm    11.2 cm3 solid
   lower_tray             57.9 x  32.6 x   5.3 mm     4.0 cm3 solid
   limit_screw            27.0 x  26.1 x  59.0 mm     8.5 cm3 solid
   limit_nut              20.0 x  20.0 x  10.0 mm     2.9 cm3 solid
@@ -34,4 +34,4 @@ Lower tray hinge: working tilt up to 51 deg relative to the lever tip; comes off
 
 Limit screw: right-handed thread; nut radial clearance 0.15 mm
 
-Pad lip: the inner rim reaches 0.3 mm over the pad edge, starting 0.1 mm above a 1.6 mm pad
+Pad lips: each rim reaches 0.3 mm over the edge of a 1.6 mm pad and presses 0.2 mm into it; the teeth enter through 11.0 mm

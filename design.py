@@ -55,7 +55,8 @@ class Design:
     channel_width_mm: float = 12.0
     pad_thickness_mm: float = 1.6  # 1/16 in sheet
     pad_to_rim_gap_mm: float = 0.2  # all round the pad
-    pad_lip_overhang_mm: float = 0.5  # the inner rim leans this far over the pad to hold it in
+    pad_lip_overhang_mm: float = 0.5  # each rim leans this far over the pad to hold it in
+    pad_lip_squeeze_mm: float = 0.2  # how far the lips press into the edge of the pad
     # Both trays share one dental arch, midway between a typical upper and lower one, so one pad fits either.
     # It runs through the tooth centres: (depth behind the incisal edge, half-width)
     arch: tuple[tuple[float, float], ...] = ((0, 0), (1, 5.25), (3, 9.75), (6, 13.5), (9, 15.75), (13, 17.5), (17, 18.85), (21, 20.1), (25, 21.25), (30, 22.5))
@@ -113,8 +114,8 @@ class Design:
 
     @property
     def pad_lip_underside_height_mm(self) -> float:
-        """Height above the tray floor at which the inner rim starts to lean over the pad."""
-        return self.rim_height_mm - self.rim_edge_radius_mm - self.pad_lip_overhang_mm
+        """Height above the tray floor at which the rims start to lean over the pad; the lip rises at 45 degrees from here."""
+        return self.pad_thickness_mm - self.pad_lip_squeeze_mm - self.pad_to_rim_gap_mm
 
     @property
     def base_width_mm(self) -> float:

@@ -101,7 +101,7 @@ It is optional.
 
 Bare PETG suits some teeth and not others.
 If it feels hard, add a soft pad to each tray.
-Both trays take the same pad, either way up, and a small lip on the inner rim holds it in.
+Both trays take the same pad, either way up, and a small lip on each rim holds it down by its edges.
 `tooth_pads.stl` holds two of them, and there are two ways to use it.
 
 ![Each tray with a pad in its channel, and a loose pad in front of it](images/pads.png)
@@ -112,7 +112,7 @@ Food-grade sheet cites FDA 21 CFR 177.2600.
 Print `tooth_pads.stl` in any material and use a print as the template.
 
 1. Lay the template on the sheet, trace round it with a fine pen and cut along the line with sharp scissors.
-2. Tuck the pad's inner edge under the lip, then press the rest down flat between the rims.
+2. Tuck one edge of the pad under its lip, then work the other edge under the other lip until the pad lies flat.
 
 **Print the pads.**
 Print `tooth_pads.stl` in TPU and fit the pads the same way.
@@ -140,7 +140,7 @@ Each fix below is one number in `design.py`; the [README](https://github.com/noc
 | The lower tray will not hook on, or does not swing freely | Raise `hook_mouth_clearance_mm` or `hook_inner_radius_mm` by 0.1 |
 | The screw is too loose to hold its setting, or too stiff to turn | Lower or raise `nut_thread_radial_clearance_mm` by 0.05 to 0.1 |
 | The trays do not suit your teeth | Change `arch` or `channel_width_mm` |
-| A pad pops out, or will not go under the lip | Raise or lower `pad_lip_overhang_mm` |
+| A pad pops out, or will not go under the lips | Raise or lower `pad_lip_overhang_mm` |
 
 Before it goes in your mouth, squeeze the assembled device hard against a folded towel between the trays.
 Look for whitening or cracks at the lever tip and around the pins, and reprint anything that shows them.

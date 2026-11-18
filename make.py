@@ -120,15 +120,18 @@ def check_hinge_retention(assembly: Assembly, report: list[str]):
 
 
 def check_pad_lip(report: list[str]):
-    pad = geom.extrude(parts.tooth_pad_shape(d), 0, d.pad_thickness_mm)
+    lips_full_height_mm = d.pad_lip_underside_height_mm + d.pad_lip_overhang_mm
+    assert lips_full_height_mm <= d.rim_height_mm - d.rim_edge_radius_mm, "the lips must reach their full overhang below the rounded rim tops"
     rims = parts.tray_rims(d)
-    assert (pad ^ rims).volume() < 1e-6, "a pad lying on the tray floor must clear the rims and the lip"
-    lifted_to_lip = pad.translate((0, 0, d.rim_height_mm - d.rim_edge_radius_mm - d.pad_thickness_mm))
-    assert (lifted_to_lip ^ rims).volume() > 1.0, "the lip must be in the way of a pad lifting straight out"
+    pad_plan = parts.tooth_pad_shape(d)
+    below_lips = geom.extrude(pad_plan, 0, d.pad_lip_underside_height_mm)
+    assert (below_lips ^ rims).volume() < 1e-6, "a pad must clear the rims below the lips"
+    lifted_out = geom.extrude(pad_plan, lips_full_height_mm, d.rim_height_mm - d.rim_edge_radius_mm)
+    assert (lifted_out ^ rims).volume() > 1.0, "the lips must be in the way of a pad lifting straight out"
     report.append("")
     report.append(
-        f"Pad lip: the inner rim reaches {d.pad_lip_overhang_mm - d.pad_to_rim_gap_mm:.1f} mm over the pad edge, "
-        f"starting {d.pad_lip_underside_height_mm - d.pad_thickness_mm:.1f} mm above a {d.pad_thickness_mm:.1f} mm pad"
+        f"Pad lips: each rim reaches {d.pad_lip_overhang_mm - d.pad_to_rim_gap_mm:.1f} mm over the edge of a {d.pad_thickness_mm:.1f} mm pad "
+        f"and presses {d.pad_lip_squeeze_mm:.1f} mm into it; the teeth enter through {d.channel_width_mm - 2 * d.pad_lip_overhang_mm:.1f} mm"
     )
 
 
