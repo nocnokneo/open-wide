@@ -119,6 +119,22 @@ def check_hinge_retention(assembly: Assembly, report: list[str]):
     report.append(f"\nLower tray hinge: working tilt up to {working_max:.0f} deg relative to the lever tip; comes off only at {min(releasing)}-{max(releasing)} deg")
 
 
+def check_pad_lip(report: list[str]):
+    lips_full_height_mm = d.pad_lip_underside_height_mm + d.pad_lip_overhang_mm
+    assert lips_full_height_mm <= d.rim_height_mm - d.rim_edge_radius_mm, "the lips must reach their full overhang below the rounded rim tops"
+    rims = parts.tray_rims(d)
+    pad_plan = parts.tooth_pad_shape(d)
+    below_lips = geom.extrude(pad_plan, 0, d.pad_lip_underside_height_mm)
+    assert (below_lips ^ rims).volume() < 1e-6, "a pad must clear the rims below the lips"
+    lifted_out = geom.extrude(pad_plan, lips_full_height_mm, d.rim_height_mm - d.rim_edge_radius_mm)
+    assert (lifted_out ^ rims).volume() > 1.0, "the lips must be in the way of a pad lifting straight out"
+    report.append("")
+    report.append(
+        f"Pad lips: each rim reaches {d.pad_lip_overhang_mm - d.pad_to_rim_gap_mm:.1f} mm over the edge of a {d.pad_thickness_mm:.1f} mm pad "
+        f"and presses {d.pad_lip_squeeze_mm:.1f} mm into it; the teeth enter through {d.channel_width_mm - 2 * d.pad_lip_overhang_mm:.1f} mm"
+    )
+
+
 def write_renders(assembly: Assembly, laid_out: dict[str, Manifold]):
     IMAGE_DIR.mkdir(parents=True, exist_ok=True)
     for opening in (d.closed_opening_mm, 30.0, d.max_opening_mm):
@@ -168,15 +184,15 @@ def _write_tray_fitting(assembly: Assembly):
 
 
 def _write_pads():
-    """Both trays, rims up, with a pad in the tooth channel, and the pads as printed in front."""
-    pads = {letter: geom.extrude(shape, 0, d.pad_thickness_mm) for letter, shape in parts.tooth_pad_shapes(d).items()}
-    trays = {"U": ("upper", parts.upper_mouthpiece(d)), "L": ("lower", parts.lower_tray(d).rotate((180, 0, 0)))}
+    """Both trays, rims up, with a pad in the tooth channel, and a loose pad in front of each."""
+    pad = geom.extrude(parts.tooth_pad_shape(d), 0, d.pad_thickness_mm)
+    trays = {"upper": parts.upper_mouthpiece(d), "lower": parts.lower_tray(d).rotate((180, 0, 0))}
     scene, pitch_mm = {}, 66.0
-    for i, (letter, (colour_key, tray)) in enumerate(trays.items()):
+    for i, (colour_key, tray) in enumerate(trays.items()):
         y = -i * pitch_mm
-        scene[f"{colour_key}_{letter}"] = tray.translate((0, y, 0))
-        scene[f"pad_{letter}_fitted"] = pads[letter].translate((0, y, 0))
-        scene[f"pad_{letter}_printed"] = parts.tooth_pad(letter, d).translate((-42, y, 0))
+        scene[f"{colour_key}_tray"] = tray.translate((0, y, 0))
+        scene[f"pad_{colour_key}_fitted"] = pad.translate((0, y, 0))
+        scene[f"pad_{colour_key}_loose"] = pad.translate((-42, y, 0))
     centre = (-12, -pitch_mm / 2, 0)
     render(scene, str(IMAGE_DIR / "pads.png"), "iso", size=(1600, 1300), zoom=1.0, camera=[(centre[0] - 165, centre[1], 320), centre, (1, 0, 0)])
     _trim_margins(IMAGE_DIR / "pads.png")
@@ -218,6 +234,7 @@ def main():
     check_assembly(assembly, report)
     check_hinge_retention(assembly, report)
     check_thread(report)
+    check_pad_lip(report)
     (ROOT / "report.txt").write_text("\n".join(report) + "\n")
     print("\n".join(report))
     write_renders(assembly, laid_out)

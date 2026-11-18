@@ -51,13 +51,15 @@ class Design:
     rim_height_mm: float = 2.6
     rim_width_mm: float = 1.6
     tray_depth_mm: float = 25.0  # how far the trays reach back from the incisal edge
-    upper_channel_width_mm: float = 12.0
-    lower_channel_width_mm: float = 11.0
-    pad_thickness_mm: float = 1.5
+    rim_edge_radius_mm: float = 0.4
+    channel_width_mm: float = 12.0
+    pad_thickness_mm: float = 1.6  # 1/16 in sheet
     pad_to_rim_gap_mm: float = 0.2  # all round the pad
-    # dental arch through the tooth centres: (depth behind the incisal edge, half-width)
-    upper_arch: tuple[tuple[float, float], ...] = ((0, 0), (1, 5.5), (3, 10), (6, 14), (9, 16.5), (13, 18), (17, 19), (21, 20), (25, 21), (30, 22))
-    lower_arch: tuple[tuple[float, float], ...] = ((0, 0), (1, 5), (2.5, 8.5), (4, 11), (6, 13), (9, 15), (12, 16.5), (16, 18.3), (19, 19.5), (25, 21.5), (30, 23))
+    pad_lip_overhang_mm: float = 0.5  # each rim leans this far over the pad to hold it in
+    pad_lip_squeeze_mm: float = 0.2  # how far the lips press into the edge of the pad
+    # Both trays share one dental arch, midway between a typical upper and lower one, so one pad fits either.
+    # It runs through the tooth centres: (depth behind the incisal edge, half-width)
+    arch: tuple[tuple[float, float], ...] = ((0, 0), (1, 5.25), (3, 9.75), (6, 13.5), (9, 15.75), (13, 17.5), (17, 18.85), (21, 20.1), (25, 21.25), (30, 22.5))
 
     # --- lower tray hinge (bar on the tray, hook on the lever) --------------
     hinge_behind_incisal_edge_mm: float = 17.0
@@ -109,6 +111,11 @@ class Design:
     @property
     def slot_width_mm(self) -> float:
         return self.lever_thickness_mm + 2 * self.sliding_clearance_mm
+
+    @property
+    def pad_lip_underside_height_mm(self) -> float:
+        """Height above the tray floor at which the rims start to lean over the pad; the lip rises at 45 degrees from here."""
+        return self.pad_thickness_mm - self.pad_lip_squeeze_mm - self.pad_to_rim_gap_mm
 
     @property
     def base_width_mm(self) -> float:
