@@ -1,4 +1,7 @@
-# Listing for MakerWorld and Printables
+# Listings on MakerWorld and NIH 3D
+
+* MakerWorld: <https://makerworld.com/en/models/3608272-open-wide-jaw-stretcher-for-trismus-rehab>
+* NIH 3D: <https://3d.nih.gov/doi/023862/1>
 
 Neither site has an upload API, so each release is posted by hand.
 The listing stays short and sends readers to the guide, which is the single source for instructions.

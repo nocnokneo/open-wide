@@ -6,6 +6,8 @@ A hand-squeezed jaw-opening (trismus) stretcher that prints in PETG with no hard
 
 **Printing, assembly and use: <https://nocnokneo.github.io/open-wide/>**
 
+Also on [MakerWorld](https://makerworld.com/en/models/3608272-open-wide-jaw-stretcher-for-trismus-rehab) and [NIH 3D](https://3d.nih.gov/doi/023862/1).
+
 > **This is a hobby design, not a medical device.**
 > Nobody has tested, certified or clinically reviewed it, and stretching a jaw can cause injury.
 > Build and use it at your own risk, and ask your clinician first.
@@ -59,12 +61,12 @@ uv pip install --python .venv/bin/python -r requirements.txt
 | `assembly.py` | Poses and collision checks |
 | `make.py` | Checks, STL export, renders |
 | `docs/` | The guide, served by GitHub Pages |
-| `publishing/` | Listing text for the model-sharing sites |
+| `publishing/` | Listing text for MakerWorld and NIH 3D |
 
 ## Releasing
 
 Pushing a tag `v1`, `v2`, … publishes a GitHub release (`.github/workflows/release.yml`) with two files: the guide printed to PDF, and a zip of the STLs with that PDF.
-The model-sharing sites have no upload API, so update them by hand from that zip: see `publishing/listing.md`.
+The MakerWorld and NIH 3D listings have no upload API, so update them by hand from that zip: see `publishing/listing.md`.
 
 ## Numbers
 

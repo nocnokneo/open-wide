@@ -4,6 +4,8 @@ url: https://nocnokneo.github.io
 baseurl: /open-wide
 repository_url: https://github.com/nocnokneo/open-wide
 stl_zip_url: https://github.com/nocnokneo/open-wide/releases/latest/download/open-wide.zip
+makerworld_url: https://makerworld.com/en/models/3608272-open-wide-jaw-stretcher-for-trismus-rehab
+nih_3d_url: https://3d.nih.gov/doi/023862/1
 markdown: kramdown
 lang: en
 author: Taylor Braun-Jones
