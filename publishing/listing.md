@@ -38,7 +38,7 @@ Squeeze the handles and the two mouthpieces push your teeth apart, gently and un
 • Everything is printed: eight parts, no screws, no springs, no supports.
 
 PRINTING
-PETG, 0.2 mm layers, 5 walls, 25 % infill or more. All parts are already oriented. Print two pivot pins. tooth_pads.stl is optional: soft tooth pads to print in TPU, or templates for cutting them from silicone sheet (see the guide).
+PETG, 0.2 mm layers, 5 walls, 25 % infill or more. All parts are already oriented. Print two pivot pins. tooth_pads.stl is optional: templates for cutting soft tooth pads from silicone sheet, or the pads themselves if printed in TPU (see the guide).
 
 FULL GUIDE (assembly, setting the limit, use, troubleshooting):
 https://nocnokneo.github.io/open-wide/

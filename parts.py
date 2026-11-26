@@ -6,8 +6,9 @@ profile lies in XY (x = device x, y = device z) and is extruded along Z.
 Mouthpieces are built directly in device-like frames.
 """
 
+from dataclasses import dataclass
+
 import numpy as np
-import shapely.affinity
 from manifold3d import CrossSection, Manifold
 from scipy.interpolate import PchipInterpolator
 from shapely.geometry import LineString, Polygon, box as rectangle
@@ -87,47 +88,48 @@ def lever(d: Design = DESIGN) -> Manifold:
 
 
 # ----------------------------------------------------------------------- trays
-def _arch_centreline(arch, depth_mm: float) -> LineString:
-    depth_points, half_widths = np.array(arch).T
+@dataclass(frozen=True)
+class TrayPlan:
+    """Plan shapes shared by both trays, front teeth at the origin and the mouth towards -x."""
+
+    inside_arch: Polygon  # everything the line through the tooth centres encloses
+    tooth_channel: Polygon  # the floor the teeth rest on, between the rims
+    inner_rim: Polygon  # tongue side
+    outer_rim: Polygon  # lip side
+
+    @property
+    def outline(self):
+        return geom.union_2d([self.tooth_channel, self.inner_rim, self.outer_rim])
+
+
+def tray_plan(d: Design = DESIGN) -> TrayPlan:
+    depth_points, half_widths = np.array(d.arch).T
     # interpolating against sqrt(depth) keeps the front of the arch blunt and smooth
     half_width = PchipInterpolator(np.sqrt(depth_points), half_widths)
-    roots = np.linspace(0, np.sqrt(depth_mm + 4.0), 60)
+    roots = np.linspace(0, np.sqrt(d.tray_depth_mm + 4.0), 60)
     right = [(-root**2, float(half_width(root))) for root in roots]
     left = [(x, -y) for x, y in right[:0:-1]]
-    return LineString(left + right)
+    centreline = LineString(left + right)
+
+    def clipped_at_rear(shape):
+        return shape.intersection(rectangle(-d.tray_depth_mm, -60, 60, 60))
+
+    inside_arch = clipped_at_rear(Polygon(centreline.coords))
+    channel = clipped_at_rear(centreline.buffer(d.channel_width_mm / 2))
+    rims = clipped_at_rear(centreline.buffer(d.channel_width_mm / 2 + d.rim_width_mm)).difference(channel)
+    return TrayPlan(inside_arch, channel, inner_rim=rims.intersection(inside_arch), outer_rim=rims.difference(inside_arch))
 
 
-def _clip_rear(shape, depth_mm: float):
-    return shape.intersection(rectangle(-depth_mm, -60, 60, 60))
-
-
-def tooth_channel(arch, channel_width_mm: float, d: Design = DESIGN):
-    """Plan shape of the floor the teeth rest on, between a tray's rims."""
-    return _clip_rear(_arch_centreline(arch, d.tray_depth_mm).buffer(channel_width_mm / 2), d.tray_depth_mm)
-
-
-def tooth_pad_shapes(d: Design = DESIGN) -> dict[str, Polygon]:
-    """Plan shape of the pad for each tray, keyed by the letter engraved on it."""
-    channels = {"U": tooth_channel(d.upper_arch, d.upper_channel_width_mm, d), "L": tooth_channel(d.lower_arch, d.lower_channel_width_mm, d)}
-    return {letter: channel.buffer(-d.pad_to_rim_gap_mm) for letter, channel in channels.items()}
-
-
-def tooth_pad(letter: str, d: Design = DESIGN) -> Manifold:
-    """Pad for one tray, in the frame of that tray: printed soft, or printed hard as a template for cutting sheet.
-
-    The lettered face goes against the tray, so the teeth get the smooth face off the bed.
-    """
-    pad = tooth_pad_shapes(d)[letter]
-    label = shapely.affinity.rotate(geom.text_shape(letter, 6.0), -90, origin=(0, 0))  # upright with the front teeth at the top
-    x_min, y_min, x_max, y_max = label.bounds
-    label = shapely.affinity.translate(label, -(x_min + x_max) / 2, -(y_min + y_max) / 2)
-    return geom.extrude(pad, 0, d.pad_thickness_mm) - geom.extrude(label, d.pad_thickness_mm - 0.4, d.pad_thickness_mm + 1)
+def tooth_pad_shape(d: Design = DESIGN) -> Polygon:
+    """Plan shape of the pad; it fits either tray, either way up."""
+    return tray_plan(d).tooth_channel.buffer(-d.pad_to_rim_gap_mm)
 
 
 def tooth_pads(d: Design = DESIGN) -> Manifold:
-    """Both pads side by side, as printed."""
-    pitch_mm = max(pad.bounds[3] - pad.bounds[1] for pad in tooth_pad_shapes(d).values()) + 4
-    return geom.union([tooth_pad(letter, d).translate((0, i * pitch_mm, 0)) for i, letter in enumerate(tooth_pad_shapes(d))])
+    """A pad for each tray, side by side: printed soft, or printed hard as templates for cutting sheet."""
+    pad = geom.extrude(tooth_pad_shape(d), 0, d.pad_thickness_mm)
+    _, y_min, _, _, y_max, _ = pad.bounding_box()
+    return pad + pad.translate((0, y_max - y_min + 4, 0))
 
 
 def _plate(shape, z_back: float, z_tooth_side: float) -> Manifold:
@@ -138,26 +140,37 @@ def _plate(shape, z_back: float, z_tooth_side: float) -> Manifold:
     return full + edge
 
 
-def _rim(band, z_from: float, z_to: float) -> Manifold:
-    """Rim with a rounded-off free edge at z_to."""
-    band = geom.rounded(band, convex_radius=0.5)
-    step = 0.4 if z_to > z_from else -0.4
-    full = geom.extrude(band, min(z_from, z_to - step), max(z_from, z_to - step))
-    cap = geom.extrude(band.buffer(-0.4), min(z_to - step, z_to), max(z_to - step, z_to))
-    return full + cap
+def tray_rims(d: Design = DESIGN, slice_mm: float = 0.1) -> Manifold:
+    """Both rims standing on z = 0 with rounded top edges. Each leans over the channel to hold a pad down by its edges.
+
+    The lips grow at 45 degrees from underneath, so they print without support with the rims pointing up.
+    """
+    plan = tray_plan(d)
+    edge_starts_mm = d.rim_height_mm - d.rim_edge_radius_mm
+    slices = [geom.extrude(_rim_section(plan, 0.0, 0.0), 0, d.pad_lip_underside_height_mm)]
+    for z_bottom in np.arange(d.pad_lip_underside_height_mm, d.rim_height_mm - slice_mm / 2, slice_mm):
+        z = z_bottom + slice_mm / 2
+        lip_mm = min(z - d.pad_lip_underside_height_mm, d.pad_lip_overhang_mm)
+        edge_inset_mm = d.rim_edge_radius_mm - np.sqrt(d.rim_edge_radius_mm**2 - max(z - edge_starts_mm, 0.0) ** 2)
+        slices.append(geom.extrude(_rim_section(plan, lip_mm, edge_inset_mm), z_bottom, z_bottom + slice_mm))
+    return geom.union(slices)
+
+
+def _rim_section(plan: TrayPlan, lip_mm: float, edge_inset_mm: float):
+    bare_rims = geom.union_2d([plan.inner_rim, plan.outer_rim])
+    lips = bare_rims.buffer(lip_mm).intersection(plan.tooth_channel)
+    rims = geom.rounded(geom.union_2d([bare_rims, lips]), convex_radius=0.5)
+    return rims.buffer(-edge_inset_mm)
 
 
 def upper_mouthpiece(d: Design = DESIGN) -> Manifold:
     """Upper tray, stem and tang in the device frame; prints as modelled (flat face down)."""
-    centreline = _arch_centreline(d.upper_arch, d.tray_depth_mm)
-    half_channel = d.upper_channel_width_mm / 2
-    outline = _clip_rear(centreline.buffer(half_channel + d.rim_width_mm), d.tray_depth_mm)
-    channel = tooth_channel(d.upper_arch, d.upper_channel_width_mm, d)
-    plate_shape = geom.rounded(outline.convex_hull, convex_radius=2.0)
+    plan = tray_plan(d)
+    plate_shape = geom.rounded(plan.outline.convex_hull, convex_radius=2.0)
     plate = _plate(plate_shape, -d.tray_floor_mm, 0)
-    rims = _rim(outline.difference(channel), 0, d.rim_height_mm)
+    rims = tray_rims(d)
 
-    front_x = half_channel + d.rim_width_mm - 2.0
+    front_x = d.channel_width_mm / 2 + d.rim_width_mm - 2.0
     tang_start = d.head_front_x_mm + 0.3
     tang_end = d.head_front_x_mm + d.tang_length_mm
     tang_top = d.socket_top_z_mm - 0.35
@@ -191,19 +204,16 @@ def _soft_edged(profile_xz, plan_xy, half_width: float, softness: float, layer: 
 
 def lower_tray(d: Design = DESIGN) -> Manifold:
     """Lower tray in its own frame: origin at the lower incisal edge, tooth plane z = 0, teeth below."""
-    centreline = _arch_centreline(d.lower_arch, d.tray_depth_mm)
-    half_channel = d.lower_channel_width_mm / 2
-    outline = _clip_rear(centreline.buffer(half_channel + d.rim_width_mm), d.tray_depth_mm)
-    channel = tooth_channel(d.lower_arch, d.lower_channel_width_mm, d)
-    web = _clip_rear(Polygon(centreline.coords), d.tray_depth_mm).intersection(rectangle(-60, -60, -6.0, 60))
+    plan = tray_plan(d)
+    web = plan.inside_arch.intersection(rectangle(-60, -60, -6.0, 60))
     hinge_x, hinge_z = d.hinge_in_tray_xz
     half_slot = d.slot_width_mm / 2
     reach = d.hook_inner_radius_mm + d.hook_lip_mm + 0.6
     # open to the rear so the tray can swing right over the lever tip when it is hooked on
     window = rectangle(-60, -half_slot, hinge_x + reach, half_slot)
-    plate_shape = geom.rounded(geom.union_2d([outline, web]), convex_radius=1.5).difference(window)
+    plate_shape = geom.rounded(geom.union_2d([plan.outline, web]), convex_radius=1.5).difference(window)
     plate = _plate(plate_shape, d.tray_floor_mm, 0)
-    rims = _rim(outline.difference(channel), 0, -d.rim_height_mm)
+    rims = tray_rims(d).mirror((0, 0, 1))
 
     bar_profile = geom.circle((hinge_x, hinge_z), d.hinge_bar_radius_mm).intersection(rectangle(-60, -10, 60, d.tray_floor_mm))
     anchor_width = 3.4
